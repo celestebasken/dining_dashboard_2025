@@ -24,10 +24,11 @@ sustainability_dict = {
     "AGA": "Grassfed Assoc.",
     "AWA": "Animal Welfare",
     "GAP": "Global Animal Partnership",
+    "AHC": "American Humane Certified",
     "HFAC": "Humane Farm Care",
     "MSC": "Marine Stewardship Council",
-    "ASC": "Aquaculture Stewardship Council",
-    "BAP": "Best Aquaculture Practices"
+    "BAP": "Best Aquaculture Practices",
+    "MBA": "Monterrey Bay Aquarium"
 }
 
 existing_cols = [col for col in sustainability_dict if col in df.columns]
@@ -36,7 +37,7 @@ counts = {sustainability_dict[k]: df[k].sum() for k in existing_cols if df[k].su
 # Horizontal bar chart
 st.subheader("Distribution of Certifications Across All Products")
 if counts:
-    fig, ax = plt.subplots(figsize=(4, 3))
+    fig, ax = plt.subplots(figsize=(3, 2))
     ax.barh(list(counts.keys()), list(counts.values()))
     ax.set_xlabel("Number of Products")
     ax.set_ylabel("Certification")

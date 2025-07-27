@@ -52,10 +52,11 @@ sustainability_dict = {
     "AGA": "Grassfed Assoc.",
     "AWA": "Animal Welfare",
     "GAP": "Global Animal Partnership",
+    "AHC": "American Humane Certified",
     "HFAC": "Humane Farm Care",
     "MSC": "Marine Stewardship Council",
-    "ASC": "Aquaculture Stewardship Council",
-    "BAP": "Best Aquaculture Practices"
+    "BAP": "Best Aquaculture Practices",
+    "MBA": "Monterrey Bay Aquarium"
 }
 sustainability_cols = [col for col in sustainability_dict if col in df.columns]
 
@@ -106,7 +107,7 @@ else:
     # Horizontal bar chart
     st.subheader("Suppliers by Count")
     supplier_counts = filtered_df['Supplier'].value_counts()
-    fig, ax = plt.subplots(figsize=(4, 3))
+    fig, ax = plt.subplots(figsize=(3, 2))
     supplier_counts.plot(kind='barh', ax=ax)
     ax.set_xlabel("Number of Products")
     ax.set_ylabel("Supplier")
