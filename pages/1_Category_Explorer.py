@@ -2,6 +2,11 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
+st.set_page_config(page_title="Category Explorer", page_icon="📈")
+
+st.markdown("# Another title space")
+st.sidebar.header("Interactive Tool")
+
 # Load data
 @st.cache_data
 def load_data():

@@ -2,6 +2,10 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
+st.set_page_config(page_title="Sustainability Stats", page_icon="📈")
+
+st.markdown("# Another title space")
+st.sidebar.header("Sustainability Stats")
 
 @st.cache_data
 def load_data():
