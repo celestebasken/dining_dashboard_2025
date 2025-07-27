@@ -33,12 +33,13 @@ sustainability_dict = {
 existing_cols = [col for col in sustainability_dict if col in df.columns]
 counts = {sustainability_dict[k]: df[k].sum() for k in existing_cols if df[k].sum() > 0}
 
-# Pie chart
+# Horizontal bar chart
 st.subheader("Distribution of Certifications Across All Products")
 if counts:
-    fig, ax = plt.subplots(figsize=(2.5, 2.5))
-    ax.pie(counts.values(), labels=counts.keys(), autopct='%1.1f%%', startangle=90)
-    ax.axis('equal')
+    fig, ax = plt.subplots(figsize=(4, 3))
+    ax.barh(list(counts.keys()), list(counts.values()))
+    ax.set_xlabel("Number of Products")
+    ax.set_ylabel("Certification")
     st.pyplot(fig)
 else:
     st.write("No sustainability certifications found.")
