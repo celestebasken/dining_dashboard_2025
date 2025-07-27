@@ -38,7 +38,7 @@ def list_campuses(row):
 
 def list_tooltips(row):
     campuses = [c for c in campus_cols if c in row and row[c] == 1]
-    return ", ".join([campus_contacts[c] for c in campuses])
+    return ", ".join([f"{c} ({campus_contacts[c]})" for c in campuses])
 
 df['Campuses Procuring'] = df.apply(list_campuses, axis=1)
 df['Campus Contacts'] = df.apply(list_tooltips, axis=1)
@@ -92,29 +92,33 @@ if search_query:
     filtered_df = filtered_df[filtered_df.apply(fuzzy_filter, axis=1)]
 
 
-# Show filtered data
-st.title("Filtered Product Table")
-st.dataframe(filtered_df[['ProductName', 'Supplier', 'Distributor', 'Standard', 'Campuses Procuring']])
-
-# Download CSV
-st.download_button("📥 Download Filtered CSV", data=filtered_df.to_csv(index=False), file_name="filtered_data.csv", mime="text/csv")
-
-# Horizontal bar chart
-st.subheader("Suppliers by Count")
-supplier_counts = filtered_df['Supplier'].value_counts()
-fig, ax = plt.subplots(figsize=(6, 5))
-supplier_counts.plot(kind='barh', ax=ax)
-ax.set_xlabel("Number of Products")
-ax.set_ylabel("Supplier")
-st.pyplot(fig)
-
-# Pie chart of sustainability certifications
-st.subheader("Sustainability Certifications")
-standard_counts = {sustainability_dict[k]: filtered_df[k].sum() for k in sustainability_cols if filtered_df[k].sum() > 0}
-if standard_counts:
-    fig2, ax2 = plt.subplots(figsize=(6, 6))
-    ax2.pie(standard_counts.values(), labels=standard_counts.keys(), autopct='%1.1f%%', startangle=90)
-    ax2.axis('equal')
-    st.pyplot(fig2)
+# Handle case when no data is returned
+if filtered_df.empty:
+    st.warning("No products found for the selected filters. Please try a different combination.")
 else:
-    st.write("No sustainability certifications in this selection.")
+   # Show filtered data
+  st.title("Filtered Product Table")
+  st.dataframe(filtered_df[['ProductName', 'Supplier', 'Distributor', 'Standard', 'Campuses Procuring']])
+
+  # Download CSV
+  st.download_button("📥 Download Filtered CSV", data=filtered_df.to_csv(index=False), file_name="filtered_data.csv", mime="text/csv")
+
+    # Horizontal bar chart
+    st.subheader("Suppliers by Count")
+    supplier_counts = filtered_df['Supplier'].value_counts()
+    fig, ax = plt.subplots(figsize=(4, 3))
+    supplier_counts.plot(kind='barh', ax=ax)
+    ax.set_xlabel("Number of Products")
+    ax.set_ylabel("Supplier")
+    st.pyplot(fig)
+
+    # Pie chart of sustainability certifications
+    st.subheader("Sustainability Certifications")
+    standard_counts = {sustainability_dict[k]: filtered_df[k].sum() for k in sustainability_cols if filtered_df[k].sum() > 0}
+    if standard_counts:
+        fig2, ax2 = plt.subplots(figsize=(4, 4))
+        ax2.pie(standard_counts.values(), labels=standard_counts.keys(), autopct='%1.1f%%', startangle=90)
+        ax2.axis('equal')
+        st.pyplot(fig2)
+    else:
+        st.write("No sustainability certifications in this selection.")
