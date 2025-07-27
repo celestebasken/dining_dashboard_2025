@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="Category Explorer", page_icon="📈")
 
-st.markdown("# Another title space")
 st.sidebar.header("Interactive Tool")
 
 # Load data
@@ -74,7 +73,7 @@ st.download_button("📥 Download Filtered CSV", data=filtered_df.to_csv(index=F
 # Show filtered data
 st.title("Filtered Product Table")
 with st.expander("View Table"):
-    st.dataframe(filtered_df[['Product Name', 'Supplier', 'Distributor', 'Standard', 'Campuses Procuring']])
+    st.dataframe(filtered_df[['ProductName', 'Supplier', 'Distributor', 'Standard', 'Campuses Procuring']])
 
 # Horizontal bar chart
 st.subheader("Suppliers by Count")

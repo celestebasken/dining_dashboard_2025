@@ -3,7 +3,6 @@ import pandas as pd
 
 st.set_page_config(page_title="View by Distributor", page_icon="📈")
 
-st.markdown("# Another title space")
 st.sidebar.header("View by Distributor")
 
 # Load data
@@ -37,7 +36,7 @@ st.write(", ".join(suppliers))
 
 # Show mini table
 st.subheader("Products Provided by This Distributor")
-st.dataframe(dist_df[['Product Name', 'Supplier', 'Category', 'Standard']])
+st.dataframe(dist_df[['ProductName', 'Supplier', 'Category', 'Standard']])
 
 # Optional download button
 st.download_button(
@@ -82,7 +81,7 @@ st.write(", ".join(suppliers))
 
 # Show mini table
 st.subheader("Products Provided by This Distributor")
-st.dataframe(dist_df[['Product Name', 'Supplier', 'Category', 'Standard']])
+st.dataframe(dist_df[['ProductName', 'Supplier', 'Category', 'Standard']])
 
 # Optional download button
 st.download_button(
