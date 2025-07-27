@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="Distributor View", layout="wide")
 
 # Load data
 @st.cache_data
