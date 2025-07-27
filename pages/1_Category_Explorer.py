@@ -116,7 +116,7 @@ else:
     st.subheader("Sustainability Certifications")
     standard_counts = {sustainability_dict[k]: filtered_df[k].sum() for k in sustainability_cols if filtered_df[k].sum() > 0}
     if standard_counts:
-        fig2, ax2 = plt.subplots(figsize=(4, 4))
+        fig2, ax2 = plt.subplots(figsize=(2.5, 2.5))
         ax2.pie(standard_counts.values(), labels=standard_counts.keys(), autopct='%1.1f%%', startangle=90)
         ax2.axis('equal')
         st.pyplot(fig2)
