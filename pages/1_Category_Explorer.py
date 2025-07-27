@@ -72,11 +72,11 @@ st.download_button("📥 Download Filtered CSV", data=filtered_df.to_csv(index=F
 
 # Show filtered data
 st.title("Filtered Product Table")
-with st.expander("View Table"):
-    st.dataframe(filtered_df[['ProductName', 'Supplier', 'Distributor', 'Standard', 'Campuses Procuring']])
+st.subheader(f"Showing items in **{selected_category}**")
+st.dataframe(filtered_df[['ProductName', 'Supplier', 'Distributor', 'Standard', 'Campuses Procuring']])
 
 # Horizontal bar chart
-st.subheader("Suppliers by Count")
+st.subheader("Suppliers in Selected Category")
 supplier_counts = filtered_df['Supplier'].value_counts()
 fig, ax = plt.subplots()
 supplier_counts.plot(kind='barh', ax=ax)
