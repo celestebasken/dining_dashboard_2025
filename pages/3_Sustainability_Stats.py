@@ -36,7 +36,7 @@ counts = {sustainability_dict[k]: df[k].sum() for k in existing_cols if df[k].su
 # Pie chart
 st.subheader("Distribution of Certifications Across All Products")
 if counts:
-    fig, ax = plt.subplots(figsize=(3, 3))
+    fig, ax = plt.subplots(figsize=(0.5, 0.5))
     ax.pie(counts.values(), labels=counts.keys(), autopct='%1.1f%%', startangle=90)
     ax.axis('equal')
     st.pyplot(fig)

@@ -25,7 +25,7 @@ else:
     st.write(", ".join(suppliers))
 
     st.subheader("Products from This Distributor")
-    st.dataframe(dist_df[['Product Name', 'Supplier', 'Category', 'Standard']])
+    st.dataframe(dist_df[['ProductName', 'Supplier', 'Category', 'Standard']])
 
     st.download_button(
         label="📥 Download Distributor Products",
@@ -50,7 +50,7 @@ else:
     st.write(", ".join(distros))
 
     st.subheader("Products from This Supplier")
-    st.dataframe(supp_df[['Product Name', 'Distributor', 'Category', 'Standard']])
+    st.dataframe(supp_df[['ProductName', 'Distributor', 'Category', 'Standard']])
 
     st.download_button(
         label="📥 Download Supplier Products",

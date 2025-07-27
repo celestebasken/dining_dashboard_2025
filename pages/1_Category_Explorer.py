@@ -96,12 +96,12 @@ if search_query:
 if filtered_df.empty:
     st.warning("No products found for the selected filters. Please try a different combination.")
 else:
-   # Show filtered data
-  st.title("Filtered Product Table")
-  st.dataframe(filtered_df[['ProductName', 'Supplier', 'Distributor', 'Standard', 'Campuses Procuring']])
+    # Show filtered data
+    st.title("Filtered Product Table")
+    st.dataframe(filtered_df[['ProductName', 'Supplier', 'Distributor', 'Standard', 'Campuses Procuring']])
 
-  # Download CSV
-  st.download_button("📥 Download Filtered CSV", data=filtered_df.to_csv(index=False), file_name="filtered_data.csv", mime="text/csv")
+    # Download CSV
+    st.download_button("📥 Download Filtered CSV", data=filtered_df.to_csv(index=False), file_name="filtered_data.csv", mime="text/csv")
 
     # Horizontal bar chart
     st.subheader("Suppliers by Count")
@@ -122,3 +122,4 @@ else:
         st.pyplot(fig2)
     else:
         st.write("No sustainability certifications in this selection.")
+
