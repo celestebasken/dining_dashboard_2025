@@ -1,10 +1,8 @@
-# This is the main entry point for your multi-page Streamlit app.
-# It will serve as the landing page and route to others via the sidebar.
-
 import streamlit as st
 
 st.set_page_config(page_title="Institutional Food Dashboard", layout="wide")
 
+# 👇 This is the key line that activates the Pages menu!
 st.sidebar.title("Navigation")
 
 st.title("Institutional Food Purchasing Dashboard")
