@@ -4,6 +4,7 @@ st.set_page_config(page_title="Institutional Food Dashboard", layout="wide")
 
 # 👇 This is the key line that activates the Pages menu!
 st.sidebar.title("Navigation")
+st.sidebar.success("Select a demo above")
 
 st.title("Institutional Food Purchasing Dashboard")
 
