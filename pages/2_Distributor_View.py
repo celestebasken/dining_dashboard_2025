@@ -63,7 +63,7 @@ st.title("Explore by Distributor")
 
 # List of all distributors
 distributors = sorted(df['Distributor'].dropna().unique())
-selected_distributor = st.selectbox("Select a Distributor", distributors)
+selected_distributor = st.selectbox("Select a Distributor", distributors, key="distributor_select")
 
 dist_df = df[df['Distributor'] == selected_distributor]
 suppliers = sorted(dist_df['Supplier'].dropna().unique())
