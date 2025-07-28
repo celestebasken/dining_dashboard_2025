@@ -13,6 +13,12 @@ df = load_data()
 
 st.title("Explore by Distributor")
 
+st.markdown("""
+# Distributor and Supplier View
+Use this page to explore the sustainable offerings that distributors and suppliers are providing to UC campuses.
+
+""")
+
 distributors = sorted(df['Distributor'].dropna().unique())
 selected_distributor = st.selectbox("Select a Distributor", distributors, key="distributor_select")
 
@@ -23,6 +29,29 @@ else:
     st.subheader(f"Suppliers Provided by {selected_distributor}")
     suppliers = sorted(dist_df['Supplier'].dropna().unique())
     st.write(", ".join(suppliers))
+
+    # Mapping short codes to full campus names
+    campus_name_map = {
+         "UCLA": "UCLA",
+         "UCD_H": "UC Davis Health",
+         "UCB": "UC Berkeley",
+         "UCR": "UC Riverside",
+         "UCM": "UC Merced",
+         "UCSC": "UC Santa Cruz"
+    }
+
+    campus_cols = campus_name_map.keys()
+
+    # Find campuses with any products from this distributor
+    campuses_procuring = [campus for campus in campus_cols if campus in dist_df.columns and dist_df[campus].sum() > 0]
+    full_names = [campus_name_map[campus] for campus in campuses_procuring]
+
+    st.subheader(f"Campuses Purchasing from {selected_distributor}")
+    if full_names:
+         st.write(", ".join(full_names))
+    else:
+          st.write("No campus purchases found for this distributor.")
+
 
     st.subheader("Products from This Distributor")
     st.dataframe(dist_df[['ProductName', 'Supplier', 'Category', 'Standard']])

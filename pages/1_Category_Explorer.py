@@ -92,6 +92,14 @@ if search_query:
         return max(name_score, supplier_score) > 0.4
     filtered_df = filtered_df[filtered_df.apply(fuzzy_filter, axis=1)]
 
+st.markdown("""
+## Product Explorer
+Use the menu on the left to search for sustainable food items by category, campus region, campus, or sustainability certification.
+- All products that appear in the table below are certified sustainable per AASHE STARS or Practice Greenhealth. Please click on 
+the About tab to learn more about sustainability certifications
+- You can download the current table view with the "Download Filtered CSV" button
+
+""")
 
 # Handle case when no data is returned
 if filtered_df.empty:
@@ -107,7 +115,7 @@ else:
     # Horizontal bar chart
     st.subheader("Suppliers by Count")
     supplier_counts = filtered_df['Supplier'].value_counts()
-    fig, ax = plt.subplots(figsize=(3, 2))
+    fig, ax = plt.subplots(figsize=(2, 2))
     supplier_counts.plot(kind='barh', ax=ax)
     ax.set_xlabel("Number of Products")
     ax.set_ylabel("Supplier")
@@ -117,9 +125,10 @@ else:
     st.subheader("Sustainability Certifications")
     standard_counts = {sustainability_dict[k]: filtered_df[k].sum() for k in sustainability_cols if filtered_df[k].sum() > 0}
     if standard_counts:
-        fig2, ax2 = plt.subplots(figsize=(2.5, 2.5))
-        ax2.pie(standard_counts.values(), labels=standard_counts.keys(), autopct='%1.1f%%', startangle=90)
-        ax2.axis('equal')
+        fig2, ax2 = plt.subplots(figsize=(2, 1))
+        ax2.barh(list(standard_counts.keys()), list(standard_counts.values()))
+        ax2.set_xlabel("Number of Products")
+        ax2.set_ylabel("Certification")
         st.pyplot(fig2)
     else:
         st.write("No sustainability certifications in this selection.")
