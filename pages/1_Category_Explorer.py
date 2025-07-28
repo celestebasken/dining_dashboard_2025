@@ -110,6 +110,7 @@ if search_query:
 st.markdown("""
 ## Product Explorer
 Use the menu on the left to search for sustainable food items by category, campus region, campus, or sustainability certification.
+- The default view is all sustainable products that UC campuses shared with our team, so it is quite large.
 - All products that appear in the table below are certified sustainable per AASHE STARS or Practice Greenhealth. Please click on 
 the About tab to learn more about sustainability certifications
 - You can download the current table view with the "Download Filtered CSV" button
