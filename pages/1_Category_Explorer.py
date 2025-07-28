@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import difflib
 
 st.set_page_config(page_title="Category Explorer", page_icon="📈")
 
@@ -32,6 +33,15 @@ campus_contacts = {
     "UCSC": "UC Santa Cruz - Riley Nguyen (riley.nguyen@ucsc.edu)"
 }
 
+campus_name_map = {
+    "UCLA": "UCLA",
+    "UCD_H": "UC Davis Health",
+    "UCB": "UC Berkeley",
+    "UCR": "UC Riverside",
+    "UCM": "UC Merced",
+    "UCSC": "UC Santa Cruz"
+}
+
 def list_campuses(row):
     campuses = [c for c in campus_cols if c in row and row[c] == 1]
     return ", ".join(campuses)
@@ -40,8 +50,13 @@ def list_tooltips(row):
     campuses = [c for c in campus_cols if c in row and row[c] == 1]
     return ", ".join([f"{c} ({campus_contacts[c]})" for c in campuses])
 
+def list_full_campuses(row):
+    campuses = [c for c in campus_cols if c in row and row[c] == 1]
+    return ", ".join([campus_name_map[c] for c in campuses])
+
 df['Campuses Procuring'] = df.apply(list_campuses, axis=1)
 df['Campus Contacts'] = df.apply(list_tooltips, axis=1)
+df['Full Campus Names'] = df.apply(list_full_campuses, axis=1)
 
 # Sustainability standard mapping
 sustainability_dict = {
@@ -62,9 +77,9 @@ sustainability_cols = [col for col in sustainability_dict if col in df.columns]
 
 # Sidebar filters
 st.sidebar.header("Filter Options")
-categories = sorted(df['Category'].dropna().unique())
+categories = ["All"] + sorted(df['Category'].dropna().unique())
 selected_category = st.sidebar.selectbox("Select Food Category", categories)
-filtered_df = df[df['Category'] == selected_category]
+filtered_df = df if selected_category == "All" else df[df['Category'] == selected_category]
 
 # Region filter
 regions = list(region_map.keys())
@@ -98,38 +113,41 @@ Use the menu on the left to search for sustainable food items by category, campu
 - All products that appear in the table below are certified sustainable per AASHE STARS or Practice Greenhealth. Please click on 
 the About tab to learn more about sustainability certifications
 - You can download the current table view with the "Download Filtered CSV" button
-
 """)
 
 # Handle case when no data is returned
 if filtered_df.empty:
     st.warning("No products found for the selected filters. Please try a different combination.")
 else:
-    # Show filtered data
     st.title("Filtered Product Table")
     st.dataframe(filtered_df[['ProductName', 'Supplier', 'Distributor', 'Standard', 'Campuses Procuring']])
 
-    # Download CSV
     st.download_button("📥 Download Filtered CSV", data=filtered_df.to_csv(index=False), file_name="filtered_data.csv", mime="text/csv")
 
-    # Horizontal bar chart
-    st.subheader("Suppliers by Count")
-    supplier_counts = filtered_df['Supplier'].value_counts()
-    fig, ax = plt.subplots(figsize=(2, 2))
-    supplier_counts.plot(kind='barh', ax=ax)
-    ax.set_xlabel("Number of Products")
-    ax.set_ylabel("Supplier")
-    st.pyplot(fig)
+    st.subheader("Suppliers Providing These Products")
+    unique_suppliers = sorted(filtered_df['Supplier'].dropna().unique())
+    st.write(", ".join(unique_suppliers))
 
-    # Pie chart of sustainability certifications
+    st.subheader("Campuses Purchasing These Products")
+    campus_names = set()
+    for row in filtered_df.itertuples():
+        if hasattr(row, 'Full_Campus_Names'):
+            campus_names.update([x.strip() for x in getattr(row, 'Full_Campus_Names').split(',') if x.strip()])
+        else:
+            campus_names.update([campus_name_map[c] for c in campus_cols if getattr(row, c) == 1])
+    if campus_names:
+        st.write(", ".join(sorted(campus_names)))
+    else:
+        st.write("No campus purchases found in this selection.")
+
+    # Horizontal bar chart of sustainability certifications
     st.subheader("Sustainability Certifications")
     standard_counts = {sustainability_dict[k]: filtered_df[k].sum() for k in sustainability_cols if filtered_df[k].sum() > 0}
     if standard_counts:
-        fig2, ax2 = plt.subplots(figsize=(2, 1))
+        fig2, ax2 = plt.subplots(figsize=(4, 3))
         ax2.barh(list(standard_counts.keys()), list(standard_counts.values()))
         ax2.set_xlabel("Number of Products")
         ax2.set_ylabel("Certification")
         st.pyplot(fig2)
     else:
         st.write("No sustainability certifications in this selection.")
-
