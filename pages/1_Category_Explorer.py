@@ -98,21 +98,12 @@ cert = st.sidebar.selectbox("Filter by Sustainability Standard", ["All"] + susta
 if cert != "All":
     filtered_df = filtered_df[filtered_df[cert] == 1]
 
-# Fuzzy search
-search_query = st.sidebar.text_input("Fuzzy Search (Product/Supplier)", "")
-if search_query:
-    def fuzzy_filter(row):
-        name_score = difflib.SequenceMatcher(None, search_query.lower(), str(row['ProductName']).lower()).ratio()
-        supplier_score = difflib.SequenceMatcher(None, search_query.lower(), str(row['Supplier']).lower()).ratio()
-        return max(name_score, supplier_score) > 0.4
-    filtered_df = filtered_df[filtered_df.apply(fuzzy_filter, axis=1)]
-
 st.markdown("""
 ## Product Explorer
 Use the menu on the left to search for sustainable food items by category, campus region, campus, or sustainability certification.
 - The default view is all sustainable products that UC campuses shared with our team, so it is quite large.
 - All products that appear in the table below are certified sustainable per AASHE STARS or Practice Greenhealth. Please click on 
-the About tab to learn more about sustainability certifications
+the app tab to learn more about sustainability certifications
 - You can download the current table view with the "Download Filtered CSV" button
 """)
 
