@@ -11,12 +11,28 @@ def load_data():
 
 df = load_data()
 
+# Campus mapping and helpers
+campus_name_map = {
+    "UCLA": "UCLA",
+    "UCD_H": "UC Davis Health",
+    "UCB": "UC Berkeley",
+    "UCR": "UC Riverside",
+    "UCM": "UC Merced",
+    "UCSC": "UC Santa Cruz"
+}
+campus_cols = list(campus_name_map.keys())
+
+def list_campuses(row):
+    campuses = [c for c in campus_cols if c in row and row[c] == 1]
+    return ", ".join([campus_name_map[c] for c in campuses])
+
+df['Campuses Procuring'] = df.apply(list_campuses, axis=1)
+
 st.title("Explore by Distributor")
 
 st.markdown("""
 # Distributor and Supplier View
 Use this page to explore the sustainable offerings that distributors and suppliers are providing to UC campuses.
-
 """)
 
 distributors = sorted(df['Distributor'].dropna().unique())
@@ -30,31 +46,15 @@ else:
     suppliers = sorted(dist_df['Supplier'].dropna().unique())
     st.write(", ".join(suppliers))
 
-    # Mapping short codes to full campus names
-    campus_name_map = {
-         "UCLA": "UCLA",
-         "UCD_H": "UC Davis Health",
-         "UCB": "UC Berkeley",
-         "UCR": "UC Riverside",
-         "UCM": "UC Merced",
-         "UCSC": "UC Santa Cruz"
-    }
-
-    campus_cols = campus_name_map.keys()
-
-    # Find campuses with any products from this distributor
-    campuses_procuring = [campus for campus in campus_cols if campus in dist_df.columns and dist_df[campus].sum() > 0]
-    full_names = [campus_name_map[campus] for campus in campuses_procuring]
-
+    campuses_procuring = [campus_name_map[c] for c in campus_cols if c in dist_df.columns and dist_df[c].sum() > 0]
     st.subheader(f"Campuses Purchasing from {selected_distributor}")
-    if full_names:
-         st.write(", ".join(full_names))
+    if campuses_procuring:
+        st.write(", ".join(campuses_procuring))
     else:
-          st.write("No campus purchases found for this distributor.")
-
+        st.write("No campus purchases found for this distributor.")
 
     st.subheader("Products from This Distributor")
-    st.dataframe(dist_df[['ProductName', 'Supplier', 'Category', 'Standard']])
+    st.dataframe(dist_df[['ProductName', 'Supplier', 'Category', 'Standard', 'Campuses Procuring']])
 
     st.download_button(
         label="📥 Download Distributor Products",
@@ -78,8 +78,15 @@ else:
     distros = sorted(supp_df['Distributor'].dropna().unique())
     st.write(", ".join(distros))
 
+    campuses_procuring = [campus_name_map[c] for c in campus_cols if c in supp_df.columns and supp_df[c].sum() > 0]
+    st.subheader(f"Campuses Purchasing from {selected_supplier}")
+    if campuses_procuring:
+        st.write(", ".join(campuses_procuring))
+    else:
+        st.write("No campus purchases found for this supplier.")
+
     st.subheader("Products from This Supplier")
-    st.dataframe(supp_df[['ProductName', 'Distributor', 'Category', 'Standard']])
+    st.dataframe(supp_df[['ProductName', 'Distributor', 'Category', 'Standard', 'Campuses Procuring']])
 
     st.download_button(
         label="📥 Download Supplier Products",
