@@ -45,7 +45,4 @@ if counts:
 else:
     st.write("No sustainability certifications found.")
 
-# Glossary section
-st.subheader("Glossary of Certification Terms")
-for short, full in sustainability_dict.items():
-    st.markdown(f"**{short}**: {full}")
+

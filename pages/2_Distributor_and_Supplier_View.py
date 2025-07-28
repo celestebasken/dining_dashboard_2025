@@ -28,12 +28,12 @@ def list_campuses(row):
 
 df['Campuses Procuring'] = df.apply(list_campuses, axis=1)
 
-st.title("Explore by Distributor")
-
 st.markdown("""
 # Distributor and Supplier View
 Use this page to explore the sustainable offerings that distributors and suppliers are providing to UC campuses.
 """)
+
+st.title("Explore by Distributor")
 
 distributors = sorted(df['Distributor'].dropna().unique())
 selected_distributor = st.selectbox("Select a Distributor", distributors, key="distributor_select")
