@@ -2,6 +2,10 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
+if st.session_state.get("authentication_status") != True:
+    st.info("Please log in on the main page to continue.")
+    st.stop()
+
 st.set_page_config(page_title="Sustainability Stats", page_icon="📈")
 
 st.sidebar.header("Sustainability Stats")

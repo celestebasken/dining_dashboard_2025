@@ -41,7 +41,15 @@ authenticator = stauth.Authenticate(
 if "auth_status" not in st.session_state:
     st.session_state["auth_status"] = None
 
-name, auth_status, username = authenticator.login("Login", "main")
+name, auth_status, username = authenticator.login(
+    location="main",
+    fields={
+        "Form name": "Login",
+        "Username": "Username",
+        "Password": "Password",
+        "Login": "Login",
+    },
+)
 
 if auth_status is False:
     st.error("Invalid username or password, please try again or contact Celeste for help")

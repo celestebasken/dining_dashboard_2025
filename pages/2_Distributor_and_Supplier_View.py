@@ -1,6 +1,10 @@
 import streamlit as st
 import pandas as pd
 
+if st.session_state.get("authentication_status") != True:
+    st.info("Please log in on the main page to continue.")
+    st.stop()
+
 st.set_page_config(page_title="Distributor & Supplier View", layout="wide")
 
 @st.cache_data
