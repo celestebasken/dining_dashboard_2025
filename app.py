@@ -68,20 +68,35 @@ Welcome to the UC Sustainable Procurement Dashboard!
 """)
 
 # ---- Data loader used by the landing page only ----
-@st.cache_data(show_spinner=False)
+@st.cache_data(show_spinner=False, ttl=600)
 def load_data():
     url = os.getenv(
         "CSV_GDRIVE_URL",
         "https://docs.google.com/spreadsheets/d/1qsapyNmZleoL75aIwH57W3nqTc_VLhdbFEieOTwYWiI/export?format=csv&gid=0",
     )
-    r = requests.get(url, timeout=30)
-    r.raise_for_status()
-    if r.text.lstrip().startswith("<"):
-        st.error("Google Sheets returned HTML (check sharing: 'Anyone with the link: Viewer').")
-        return pd.DataFrame()
-    df = pd.read_csv(StringIO(r.text))
-    df.columns = df.columns.str.strip()
-    return df
+    headers = {"User-Agent": "Mozilla/5.0"}  # helps avoid some 400s/blocks
+    last_err = None
+
+    for attempt in range(3):  # simple retry
+        try:
+            r = requests.get(url, headers=headers, timeout=30)
+            if r.status_code == 200:
+                # If Drive returned an HTML page (permissions/login), don't crash
+                if r.text.lstrip().startswith("<"):
+                    st.error("Google Sheets returned HTML (likely permissions). Share as 'Anyone with the link: Viewer'.")
+                    return pd.DataFrame()
+                df = pd.read_csv(StringIO(r.text))
+                df.columns = df.columns.str.strip()
+                return df
+            else:
+                last_err = f"HTTP {r.status_code}"
+        except Exception as e:
+            last_err = str(e)
+        time.sleep(1.5 * (attempt + 1))  # backoff
+
+    st.error(f"Failed to fetch CSV from Google Sheets. {last_err or ''} "
+             f"Check the URL & gid, and that sharing is 'Anyone with the link: Viewer'.")
+    return pd.DataFrame()
 
 df = load_data()
 if df.empty:
