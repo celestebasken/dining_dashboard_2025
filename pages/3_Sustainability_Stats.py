@@ -1,19 +1,20 @@
-import streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
-import difflib
+# pages/3_Sustainability_Stats.py
+
 import os, requests
 from io import StringIO
+import pandas as pd
+import streamlit as st
+import matplotlib.pyplot as plt
 
+# --- require login ---
 if st.session_state.get("authentication_status") != True:
     st.info("Please log in on the main page to continue.")
     st.stop()
 
-st.set_page_config(page_title="Sustainability Stats", page_icon="📈")
-
 st.sidebar.header("Sustainability Stats")
+st.title("Sustainability Certifications Overview")
 
-# Load data
+# --- data loader (same pattern as other pages) ---
 @st.cache_data(show_spinner=False)
 def load_data():
     url = os.getenv(
@@ -22,29 +23,23 @@ def load_data():
     )
     r = requests.get(url, timeout=30)
     r.raise_for_status()
-
-    # If Drive returns an HTML login/permission page:
     if r.text.lstrip().startswith("<"):
-        st.error("Google Sheets returned HTML (permissions?). Share the sheet as 'Anyone with the link: Viewer'.")
+        st.error("Google Sheets returned HTML (check sharing: 'Anyone with the link: Viewer').")
         return pd.DataFrame()
-
     df = pd.read_csv(StringIO(r.text))
     df.columns = df.columns.str.strip()
     return df
 
-# Load once per page run (or share via session_state below)
+# share df across pages
 if "df" not in st.session_state:
     st.session_state["df"] = load_data()
-
 df = st.session_state["df"]
 
-# Optional: stop gracefully if nothing loaded
 if df.empty:
     st.warning("No data loaded from Google Sheets. Check the CSV link or permissions.")
     st.stop()
 
-st.title("Sustainability Certifications Overview")
-
+# --- certification dictionary & guards ---
 sustainability_dict = {
     "OG": "Organic",
     "CH": "Certified Humane",
@@ -57,21 +52,29 @@ sustainability_dict = {
     "HFAC": "Humane Farm Care",
     "MSC": "Marine Stewardship Council",
     "BAP": "Best Aquaculture Practices",
-    "MBA": "Monterrey Bay Aquarium"
+    "MBA": "Monterrey Bay Aquarium",
 }
 
-existing_cols = [col for col in sustainability_dict if col in df.columns]
-counts = {sustainability_dict[k]: df[k].sum() for k in existing_cols if df[k].sum() > 0}
+# ensure missing cert columns exist; coerce to numeric
+for k in sustainability_dict:
+    if k not in df.columns:
+        df[k] = 0
+    df[k] = pd.to_numeric(df[k], errors="coerce").fillna(0)
 
-# Horizontal bar chart
+# build counts, drop zeros, sort descending
+counts = {sustainability_dict[k]: int(df[k].sum()) for k in sustainability_dict if df[k].sum() > 0}
+counts = dict(sorted(counts.items(), key=lambda x: x[1], reverse=True))
+
 st.subheader("Distribution of Certifications Across All Products")
 if counts:
-    fig, ax = plt.subplots(figsize=(3, 2))
-    ax.barh(list(counts.keys()), list(counts.values()))
+    fig, ax = plt.subplots(figsize=(4, 3))  # modest size
+    ax.barh(list(counts.keys())[::-1], list(counts.values())[::-1])  # largest on top
     ax.set_xlabel("Number of Products")
     ax.set_ylabel("Certification")
     st.pyplot(fig)
 else:
-    st.write("No sustainability certifications found.")
+    st.write("No sustainability certifications found in the current dataset.")
 
-
+# optional: quick table view
+with st.expander("See counts as a table"):
+    st.dataframe(pd.DataFrame.from_dict(counts, orient="index", columns=["Count"]))
