@@ -6,6 +6,7 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 import difflib
+import time
 
 # --- require login ---
 if st.session_state.get("authentication_status") != True:

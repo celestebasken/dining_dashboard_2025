@@ -6,6 +6,7 @@ import pandas as pd
 import streamlit as st
 import streamlit_authenticator as stauth
 from yaml.loader import SafeLoader
+import time
 
 # ---- MUST be first Streamlit call ----
 st.set_page_config(page_title="UC Sustainable Procurement Dashboard", layout="wide")
@@ -59,6 +60,15 @@ elif auth_status is None:
 # ---- Logged in UI ----
 with st.sidebar:
     authenticator.logout("Logout", "sidebar")
+
+# --- minimal landing so it's never blank ---
+st.title("UC Sustainable Procurement Dashboard")
+st.write("Welcome! Use the sidebar Pages menu, or jump in below:")
+
+# Links to pages (works even if data fails to load)
+st.page_link("pages/1_Category_Explorer.py", label="📊 Category Explorer")
+st.page_link("pages/2_Distributor_Supplier_View.py", label="🏷️ Distributor & Supplier View")
+st.page_link("pages/3_Sustainability_Stats.py", label="🌿 Sustainability Stats")
 
 st.title("UC Sustainable Procurement Dashboard")
 
