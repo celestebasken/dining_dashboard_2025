@@ -7,13 +7,31 @@ if st.session_state.get("authentication_status") != True:
 
 st.set_page_config(page_title="Distributor & Supplier View", layout="wide")
 
+# Load data
 @st.cache_data
 def load_data():
-    df = pd.read_csv("Data_for_dashboard.csv")
-    df.columns = df.columns.str.strip()
-    return df
+    # Prefer env var on Render; fallback to hardcoded CSV export link
+    url = os.getenv(
+        "CSV_GDRIVE_URL",
+        "https://docs.google.com/spreadsheets/d/1qsapyNmZleoL75aIwH57W3nqTc_VLhdbFEieOTwYWiI/export?format=csv&gid=0"
+    )
 
-df = load_data()
+    try:
+        r = requests.get(url, timeout=30)
+        r.raise_for_status()
+
+        # If permissions aren’t public, Drive may return HTML. Guard against that:
+        if r.text.lstrip().startswith("<"):
+            st.error("Google Sheets returned HTML (likely a permissions issue). Make sure the sheet is shared as 'Anyone with the link: Viewer'.")
+            return pd.DataFrame()
+
+        df = pd.read_csv(StringIO(r.text))
+        df.columns = df.columns.str.strip()
+        return df
+
+    except Exception as e:
+        st.error(f"Failed to load data: {e}")
+        return pd.DataFrame()
 
 # Campus mapping and helpers
 campus_name_map = {
