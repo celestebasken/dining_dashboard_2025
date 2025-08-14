@@ -1,6 +1,7 @@
 streamlit
 pandas
 matplotlib
+requests
 PyYAML
-streamlit-authenticator>=0.4.1
 bcrypt
+streamlit-authenticator>=0.4.1
