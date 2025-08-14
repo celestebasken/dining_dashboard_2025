@@ -38,10 +38,11 @@ authenticator = stauth.Authenticate(
     auto_hash=False,  # you already provided bcrypt hashes
 )
 
+# ---- Simple login UI ----
 if "auth_status" not in st.session_state:
     st.session_state["auth_status"] = None
 
-name, auth_status, username = authenticator.login(
+result = authenticator.login(
     location="main",
     fields={
         "Form name": "Login",
@@ -51,8 +52,15 @@ name, auth_status, username = authenticator.login(
     },
 )
 
+# Newer versions should return a tuple, but guard just in case
+if result is None:
+    st.stop()
+
+name, auth_status, username = result
+st.session_state["authentication_status"] = auth_status  # optional: used by sub-pages
+
 if auth_status is False:
-    st.error("Invalid username or password, please try again or contact Celeste for help")
+    st.error("Invalid username or password")
     st.stop()
 elif auth_status is None:
     st.info("Please enter your username and password")
