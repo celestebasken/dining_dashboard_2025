@@ -1,6 +1,9 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import difflib
+import os, requests
+from io import StringIO
 
 if st.session_state.get("authentication_status") != True:
     st.info("Please log in on the main page to continue.")
@@ -11,30 +14,34 @@ st.set_page_config(page_title="Sustainability Stats", page_icon="📈")
 st.sidebar.header("Sustainability Stats")
 
 # Load data
-@st.cache_data
+@st.cache_data(show_spinner=False)
 def load_data():
-    # Prefer env var on Render; fallback to hardcoded CSV export link
     url = os.getenv(
         "CSV_GDRIVE_URL",
-        "https://docs.google.com/spreadsheets/d/1qsapyNmZleoL75aIwH57W3nqTc_VLhdbFEieOTwYWiI/export?format=csv&gid=0"
+        "https://docs.google.com/spreadsheets/d/1qsapyNmZleoL75aIwH57W3nqTc_VLhdbFEieOTwYWiI/export?format=csv&gid=0",
     )
+    r = requests.get(url, timeout=30)
+    r.raise_for_status()
 
-    try:
-        r = requests.get(url, timeout=30)
-        r.raise_for_status()
-
-        # If permissions aren’t public, Drive may return HTML. Guard against that:
-        if r.text.lstrip().startswith("<"):
-            st.error("Google Sheets returned HTML (likely a permissions issue). Make sure the sheet is shared as 'Anyone with the link: Viewer'.")
-            return pd.DataFrame()
-
-        df = pd.read_csv(StringIO(r.text))
-        df.columns = df.columns.str.strip()
-        return df
-
-    except Exception as e:
-        st.error(f"Failed to load data: {e}")
+    # If Drive returns an HTML login/permission page:
+    if r.text.lstrip().startswith("<"):
+        st.error("Google Sheets returned HTML (permissions?). Share the sheet as 'Anyone with the link: Viewer'.")
         return pd.DataFrame()
+
+    df = pd.read_csv(StringIO(r.text))
+    df.columns = df.columns.str.strip()
+    return df
+
+# Load once per page run (or share via session_state below)
+if "df" not in st.session_state:
+    st.session_state["df"] = load_data()
+
+df = st.session_state["df"]
+
+# Optional: stop gracefully if nothing loaded
+if df.empty:
+    st.warning("No data loaded from Google Sheets. Check the CSV link or permissions.")
+    st.stop()
 
 st.title("Sustainability Certifications Overview")
 
