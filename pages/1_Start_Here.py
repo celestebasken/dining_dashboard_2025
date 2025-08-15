@@ -1,7 +1,5 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import difflib
 
 if st.session_state.get("authentication_status") != True:
     st.info("Please log in on the main page to continue.")
