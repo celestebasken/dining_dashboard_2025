@@ -10,9 +10,11 @@ st.set_page_config(page_title="Sustainability Stats", page_icon="📈")
 
 st.sidebar.header("Sustainability Stats")
 
+# Load data from public Google Sheet
 @st.cache_data
 def load_data():
-    df = pd.read_csv("Data_for_dashboard.csv")
+    url = "https://docs.google.com/spreadsheets/d/1qsapyNmZleoL75aIwH57W3nqTc_VLhdbFEieOTwYWiI/export?format=csv"
+    df = pd.read_csv(url)
     df.columns = df.columns.str.strip()
     return df
 

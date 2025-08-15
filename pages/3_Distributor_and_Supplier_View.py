@@ -7,13 +7,16 @@ if st.session_state.get("authentication_status") != True:
 
 st.set_page_config(page_title="Distributor & Supplier View", layout="wide")
 
+# Load data from public Google Sheet
 @st.cache_data
 def load_data():
-    df = pd.read_csv("Data_for_dashboard.csv")
+    url = "https://docs.google.com/spreadsheets/d/1qsapyNmZleoL75aIwH57W3nqTc_VLhdbFEieOTwYWiI/export?format=csv"
+    df = pd.read_csv(url)
     df.columns = df.columns.str.strip()
     return df
 
 df = load_data()
+
 
 # Campus mapping and helpers
 campus_name_map = {
