@@ -25,7 +25,10 @@ campus_name_map = {
     "UCB": "UC Berkeley",
     "UCR": "UC Riverside",
     "UCM": "UC Merced",
-    "UCSC": "UC Santa Cruz"
+    "UCSC": "UC Santa Cruz",
+    "UCSD_H": "UC San Diego Health",
+    "UCLA_H": "UCLA Health",
+    "UCD": "UC Davis"
 }
 campus_cols = list(campus_name_map.keys())
 

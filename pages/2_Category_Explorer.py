@@ -23,19 +23,23 @@ df = load_data()
 
 # Region mapping
 region_map = {
-    "SoCal": ["UCLA", "UCR"],
+    "SoCal": ["UCLA", "UCR","UCSD_H","UCLA_H"],
     "Central": ["UCM"],
-    "NorCal": ["UCB", "UCD_H", "UCSC"]
+    "NorCal": ["UCB", "UCD_H", "UCSC","UCD"]
 }
 
-campus_cols = ['UCLA', 'UCD_H', 'UCB', 'UCR', 'UCM', 'UCSC']
+campus_cols = ['UCLA', 'UCD_H', 'UCB', 'UCR', 'UCM', 'UCSC','UCSD_H','UCLA_H','UCD']
 campus_contacts = {
     "UCLA": "UCLA - Jane Doe (jane.doe@ucla.edu)",
-    "UCD_H": "UC Davis Health - John Smith (john.smith@ucd.edu)",
-    "UCB": "UC Berkeley - Alex Kim (alex.kim@berkeley.edu)",
-    "UCR": "UC Riverside - Maria Lopez (maria.lopez@ucr.edu)",
-    "UCM": "UC Merced - Omar Patel (omar.patel@ucmerced.edu)",
-    "UCSC": "UC Santa Cruz - Riley Nguyen (riley.nguyen@ucsc.edu)"
+    "UCD_H": "UC Davis Health - Jane Doe (jane.doe@ucla.edu)",
+    "UCB": "UC Berkeley - Jane Doe (jane.doe@ucla.edu)",
+    "UCR": "UC Riverside - Jane Doe (jane.doe@ucla.edu)",
+    "UCM": "UC Merced - Jane Doe (jane.doe@ucla.edu)",
+    "UCSC": "UC Santa Cruz - Jane Doe (jane.doe@ucla.edu)",
+    "UCSD_H": "UC San Diego Health - Jane Doe (jane.doe@ucla.edu)",
+    "UCLA_H": "UCLA Health - Jane Doe (jane.doe@ucla.edu)",
+    "UCD": "UC Davis - Jane Doe (jane.doe@ucla.edu)"
+
 }
 
 campus_name_map = {
@@ -44,7 +48,10 @@ campus_name_map = {
     "UCB": "UC Berkeley",
     "UCR": "UC Riverside",
     "UCM": "UC Merced",
-    "UCSC": "UC Santa Cruz"
+    "UCSC": "UC Santa Cruz",
+    "UCSD_H": "UC San Diego Health",
+    "UCLA_H": "UCLA Health",
+    "UCD": "UC Davis"
 }
 
 def list_campuses(row):
@@ -76,7 +83,19 @@ sustainability_dict = {
     "HFAC": "Humane Farm Care",
     "MSC": "Marine Stewardship Council",
     "BAP": "Best Aquaculture Practices",
-    "MBA": "Monterrey Bay Aquarium"
+    "MBA": "Monterrey Bay Aquarium",
+    "WWF": "WWF/Good Fish Foundation",
+    "OWR": "Ocean Wise Recommended",
+    "SSB": "Sailors for the Sea Blue list",
+    "SFSC": "Short Food supply chain",
+    "SP": "Small producer",
+    "BFC": "Bird Friendly Coffee",
+    "BBC": "Bee Better Certified (Xerces Society)",
+    "FAC": "Food Alliance Certified",
+    "SPP": "Small Producers Symbol",
+    "EFI": "Equitable Food Initiative",
+    "MWD": "Milk with Dignity",
+    "NAE": "No Antibiotics Ever"
 }
 sustainability_cols = [col for col in sustainability_dict if col in df.columns]
 
