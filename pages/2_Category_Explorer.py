@@ -17,6 +17,12 @@ def load_data():
     url = "https://docs.google.com/spreadsheets/d/1qsapyNmZleoL75aIwH57W3nqTc_VLhdbFEieOTwYWiI/export?format=csv"
     df = pd.read_csv(url)
     df.columns = df.columns.str.strip()
+
+    # Defensive: ensure aggregator columns are numeric 0/1 if present
+    for col in ["PGH", "AASHE"]:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0).astype(int)
+
     return df
 
 df = load_data()
@@ -39,7 +45,6 @@ campus_contacts = {
     "UCSD_H": "UC San Diego Health - Jane Doe (jane.doe@ucla.edu)",
     "UCLA_H": "UCLA Health - Jane Doe (jane.doe@ucla.edu)",
     "UCD": "UC Davis - Jane Doe (jane.doe@ucla.edu)"
-
 }
 
 campus_name_map = {
@@ -101,9 +106,38 @@ sustainability_cols = [col for col in sustainability_dict if col in df.columns]
 
 # Sidebar filters
 st.sidebar.header("Filter Options")
+
+# NEW: Standards Aggregator filter
+aggregator_options = ["Both", "AASHE STARS", "Practice Greenhealth"]
+selected_aggregator = st.sidebar.selectbox("Standards Aggregator", aggregator_options)
+
 categories = ["All"] + sorted(df['Category'].dropna().unique())
 selected_category = st.sidebar.selectbox("Select Food Category", categories)
+
 filtered_df = df if selected_category == "All" else df[df['Category'] == selected_category]
+
+# Apply NEW aggregator filter (expects columns PGH and AASHE in the sheet)
+if selected_aggregator == "AASHE STARS":
+    if "AASHE" in filtered_df.columns:
+        filtered_df = filtered_df[filtered_df["AASHE"] == 1]
+    else:
+        filtered_df = filtered_df.iloc[0:0]  # empty
+elif selected_aggregator == "Practice Greenhealth":
+    if "PGH" in filtered_df.columns:
+        filtered_df = filtered_df[filtered_df["PGH"] == 1]
+    else:
+        filtered_df = filtered_df.iloc[0:0]  # empty
+else:  # Both
+    has_aashe = "AASHE" in filtered_df.columns
+    has_pgh = "PGH" in filtered_df.columns
+    if has_aashe and has_pgh:
+        filtered_df = filtered_df[(filtered_df["AASHE"] == 1) | (filtered_df["PGH"] == 1)]
+    elif has_aashe:
+        filtered_df = filtered_df[filtered_df["AASHE"] == 1]
+    elif has_pgh:
+        filtered_df = filtered_df[filtered_df["PGH"] == 1]
+    else:
+        filtered_df = filtered_df.iloc[0:0]  # empty
 
 # Region filter
 regions = list(region_map.keys())
@@ -138,7 +172,12 @@ else:
     st.title("Filtered Product Table")
     st.dataframe(filtered_df[['ProductName', 'Supplier', 'Distributor', 'Standard', 'Campuses Procuring']])
 
-    st.download_button("📥 Download Filtered CSV", data=filtered_df.to_csv(index=False), file_name="filtered_data.csv", mime="text/csv")
+    st.download_button(
+        "📥 Download Filtered CSV",
+        data=filtered_df.to_csv(index=False),
+        file_name="filtered_data.csv",
+        mime="text/csv"
+    )
 
     st.subheader("Suppliers Providing These Products")
     unique_suppliers = sorted(filtered_df['Supplier'].dropna().unique())
