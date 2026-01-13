@@ -4,7 +4,7 @@ import base64
 from pathlib import Path
 
 if st.session_state.get("authentication_status") != True:
-    st.info("Please log in on the main page to continue.")
+    st.info("Please log in on the app page to continue.")
     st.stop()
 
 st.set_page_config(page_title="Start Here", page_icon="📈")
@@ -20,7 +20,7 @@ Welcome to the UC Sustainable Procurement Dashboard!
 This is a project of UC Berkeley [Bonnie Reiss Global Food Initiative Fellows](https://www.ucop.edu/leading-on-climate/student-involvement/index.html). This tool allows users to see what sustainable items are currently being purchased by UC campuses. It combines 
 sustainable food purchasing data from multiple UC campuses, highlighting key attributes such as food category, supplier, distributor, and sustainability certifications. The data for this 
 tool were kindly provided during the 2024-25 academic year by stakeholders from various campuses. If you are a UC procurement stakeholder 
-and would like to add or edit data, please contact Celeste (information below).
+and would like to add or edit data, please contact [Celeste Basken](mailto:cbasken@berkeley.edu).
             
 It is our hope that this tool will help your campus to identify further opportunities to purchase sustainable products, in alignment with the UC Office of the President's goals.
 

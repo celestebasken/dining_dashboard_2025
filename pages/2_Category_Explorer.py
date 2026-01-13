@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import difflib
 
 if st.session_state.get("authentication_status") != True:
-    st.info("Please log in on the main page to continue.")
+    st.info("Please log in on the app page to continue.")
     st.stop()
 
 st.set_page_config(page_title="Category Explorer", page_icon="📈")
