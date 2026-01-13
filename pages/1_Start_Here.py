@@ -9,8 +9,6 @@ if st.session_state.get("authentication_status") != True:
 
 st.set_page_config(page_title="Start Here", page_icon="📈")
 
-st.sidebar.header("Interactive Tool")
-
 # Load data
 st.title("UC Sustainable Procurement Dashboard")
 
