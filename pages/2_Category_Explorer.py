@@ -159,10 +159,11 @@ if cert != "All":
 st.markdown("""
 ## Product Explorer
 Use the menu on the left to search for sustainable food items by category, campus region, campus, or sustainability certification.
-- The default view is all sustainable products that UC campuses shared with our team, so it is quite large.
-- You can choose to see only products that are compliant with a specific "Standards Aggregators": either AASHE STARS for regular campuses or PGH for health campuses.
+- The default view includes all sustainable products that UC campuses shared with our team, so it is quite large.
+- You can choose to see only products that are compliant with a specific "Standards Aggregator": either AASHE STARS for regular campuses or PGH for health campuses. Please refer to the "Start Here" page for more in-depth information about sustainability standards.
 - You can download the current table view with the "Download Filtered CSV" button
 - You can search for specific products by hovering over the table view and selecting the small search icon in the top right corner.
+- Acronyms are used for simplicity under the Filter Options. Please refer to the "Start Here" page for full standard names and definitions.
 """)
 
 # Handle case when no data is returned
